@@ -1,14 +1,14 @@
 import { Day } from "../day";
 
 class Day1 extends Day {
+  digits = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]; //prettier-ignore
   constructor() {
     super(1);
   }
 
   findFirstNumber(chars: Array<string>): string {
     let output = chars.find((char) => {
-      let num = Number(char);
-      return !Number.isNaN(num);
+      return !Number.isNaN(Number(char));
     });
     if (!output) {
       throw new Error("No number found");
@@ -17,71 +17,36 @@ class Day1 extends Day {
   }
 
   replaceDigits(s: string): string {
-    const digits = [
-      "one",
-      "two",
-      "three",
-      "four",
-      "five",
-      "six",
-      "seven",
-      "eight",
-      "nine",
-    ];
-    let output = s;
-    const regex = new RegExp(
-      `(one|two|three|four|five|six|seven|eight|nine)`
-    );
-    const m = regex.exec(output);
+    const regex = new RegExp(`(one|two|three|four|five|six|seven|eight|nine)`);
+    const m = regex.exec(s);
     if (m) {
-      const subst = `${digits.indexOf(m[1]) + 1}$&`;
-      output = output.replace(regex, subst);
+      const subst = `${this.digits.indexOf(m[1]) + 1}$&`;
+      s = s.replace(regex, subst);
     }
-    return output;
+    return s;
   }
 
   reverseReplaceDigits(s: string): string {
-    const digits = [
-      "one",
-      "two",
-      "three",
-      "four",
-      "five",
-      "six",
-      "seven",
-      "eight",
-      "nine",
-    ];
-    let output = s;
-    const regex = new RegExp(
-      `(one|two|three|four|five|six|seven|eight|nine)`,
-    );
-    let i = output.length - 1;
-    while (i >= 0) {
-      let substring = output.slice(i, output.length);
+    const regex = new RegExp(`(one|two|three|four|five|six|seven|eight|nine)`);
+    for (let i = s.length - 1; i >= 0; i--) {
+      let substring = s.slice(i, s.length);
       const m = regex.exec(substring);
       if (m) {
-        const subst = `$&${digits.indexOf(m[1]) + 1}`;
-        substring = substring.replace(regex, subst);
-        output = output.slice(0, i) + substring;
-        return output;
+        const subst = `$&${this.digits.indexOf(m[1]) + 1}`;
+        return s.slice(0, i) + substring.replace(regex, subst);
       }
-      i--;
     }
-    return output;
+    return s;
   }
 
   solveForPartOne(input: string): string {
     var total = 0;
     let parts = input.split("\r\n");
-    parts.forEach((part, index) => {
-      console.log(`Part ${index}: ${part}`);
+    parts.forEach((part) => {
       let chars = [...part];
-      let concat = "";
-      concat += this.findFirstNumber(chars);
-      chars.reverse();
-      concat += this.findFirstNumber(chars);
-      total += Number(concat);
+      total += Number(
+        this.findFirstNumber(chars) + this.findFirstNumber(chars.reverse())
+      );
     });
     return `${total}`;
   }
@@ -89,16 +54,13 @@ class Day1 extends Day {
   solveForPartTwo(input: string): string {
     var total = 0;
     let parts = input.split("\r\n");
-    parts.forEach((part, index) => {
+    parts.forEach((part) => {
       part = this.replaceDigits(part);
       part = this.reverseReplaceDigits(part);
-      console.log(`Part ${index}: ${part}`);
       let chars = [...part];
-      let concat = "";
-      concat += this.findFirstNumber(chars);
-      chars.reverse();
-      concat += this.findFirstNumber(chars);
-      total += Number(concat);
+      total += Number(
+        this.findFirstNumber(chars) + this.findFirstNumber(chars.reverse())
+      );
     });
     return `${total}`;
   }
