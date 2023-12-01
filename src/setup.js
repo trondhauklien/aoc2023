@@ -12,18 +12,19 @@ if (day < 1 || day > 25) {
   exit(0);
 }
 
+const desc = process.argv[3];
+
 const startPath = process.cwd();
 
 (async function () {
-  
   console.log("\n\n\n  🎄 ADVENT OF CODE 🎄 \n\n");
   console.log(`🎁 Setting up day ${day}`);
   await createInputFiles();
   await createCodeFiles();
   await updateIndex();
-  console.log("All done! Enjoy your new puzzle! 🎅")
+  await updateReadme();
+  console.log("All done! Enjoy your new puzzle! 🎅");
 })();
-
 
 async function createDirectoryIfItDoesntExist(dir) {
   try {
@@ -47,7 +48,7 @@ async function createFileWithContentIfItDoesntExist(name, content) {
 async function createInputFiles() {
   const inputDayPath = path.join(startPath, "inputs", `day${day}`);
   await createDirectoryIfItDoesntExist(inputDayPath);
-  const year = (new Date()).getFullYear();
+  const year = new Date().getFullYear();
 
   createFileWithContentIfItDoesntExist(
     path.join(inputDayPath, "part1.txt"),
@@ -61,8 +62,10 @@ async function createInputFiles() {
 }
 
 async function copyTemplate(from, to) {
-  const content = (await promises.readFile(from, { encoding: "utf8" }))
-                  .replace(/0/g, day); // dirty, I know 😅
+  const content = (await promises.readFile(from, { encoding: "utf8" })).replace(
+    /0/g,
+    day
+  ); // dirty, I know 😅
   createFileWithContentIfItDoesntExist(to, content);
 }
 
@@ -80,14 +83,36 @@ async function createCodeFiles() {
   );
 }
 
-async function updateIndex(){
+async function updateIndex() {
   const indexPath = path.join(startPath, "src", "index.ts");
   const contents = (await promises.readFile(indexPath, { encoding: "utf8" }))
-    .replace("// MORE IMPORTS HERE", `import day${day} from './day${day}/index';
-// MORE IMPORTS HERE`)
-    .replace("// MORE DAYS HERE", `day${day},
-    // MORE DAYS HERE`);
+    .replace(
+      "// MORE IMPORTS HERE",
+      `import day${day} from './day${day}/index';
+// MORE IMPORTS HERE`
+    )
+    .replace(
+      "// MORE DAYS HERE",
+      `day${day},
+    // MORE DAYS HERE`
+    );
 
-    console.log("  Updating index")
-    await promises.writeFile(indexPath, contents);
+  console.log("  Updating index");
+  await promises.writeFile(indexPath, contents);
+}
+
+async function updateReadme() {
+  const indexPath = path.join(startPath, "README.md");
+  const contents = (
+    await promises.readFile(indexPath, { encoding: "utf8" })
+  ).replace(
+    "\r\n*more solutions coming soon*",
+    `* [Day ${day}](https://github.com/trondhauklien/aoc2023/blob/main/src/day${day}/index.ts)${
+      desc ? ` - ${desc}` : ""
+    } 
+
+*more solutions coming soon*`
+  );
+  console.log("  Updating README.md");
+  await promises.writeFile(indexPath, contents);
 }
