@@ -5,4 +5,4 @@ For keeping track of what coffies I recieve in my Coffee Calendar.
 | --- | ------------------- | -------------- | ---------- |
 | 1   | Costa Rican Tarrazu | Clever Dripper[^1] | ☕☕☕☕☕⚫⚫⚫⚫⚫ |
 
-[^1] Due to Advent of Code taking focus away from brewing, the coffee ended up a little bit over extracted.
+[^1]: Due to Advent of Code taking focus away from brewing, the coffee ended up a little bit over extracted.
